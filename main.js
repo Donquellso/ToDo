@@ -4,21 +4,23 @@ class Project{
 constructor(name){
     this.name=name;
 }
-
-getProject(){
-    console.log(tab[0]);
+}
+class ProjectElements{
+    constructor(title){
+        this.title=title;
+    }
 }
 
-}
-
-const tab = [
-{
-}
-
-
+const projectsTab = [
+// new Project({
+//     name: "Test",
+//     })
 ]; 
+
+// Object.assign(projectsTab[0], testing);
+
 const addProject = () =>{
-tab.push(el);
+projectsTab.push(el);
 }
 
 const addItems = (items) =>{
@@ -31,25 +33,55 @@ const activeProject = () =>{
 
 function DOM(){
     let projectname = document.getElementById("projectname");
+    let content = document.getElementById('content');
     let navbar = document.getElementById('navbar');
-    let submitbtn = document.getElementById("submitbtn");
-    let projectxt = document.createElement('p');
-    navbar.appendChild(projectxt);
-        submitbtn.addEventListener('click',()=>{
+    let projectCreateBtn = document.getElementById("submitbtn");
+    let projectList = document.createElement('ul');
+    let projectContentList = document.createElement('ul');
+    let projectContentInput = document.createElement('input');
+    let projectContentBtn = document.createElement('button');
+    content.appendChild(projectContentInput);
+    content.appendChild(projectContentBtn);
+
+    projectCreateBtn.addEventListener('click',()=>{
         let project = new Project(projectname.value);
-        tab.push(project);
-            updateNavbar()
+        projectsTab.push(project);
+            displayProjects();
         });
-        function updateNavbar(){
-            projectxt.textContent="";
-            tab.map(project =>{
-                projectxt.textContent+=project.name;
-            })
+    function displayProjects(){
+        projectList.innerHTML="";
+        let list = JSON.parse(getList());
+            list.forEach((project,index) => {
+                let projectListElement = document.createElement('li');
+            projectListElement.innerHTML=project.name;
+            projectList.appendChild(projectListElement);
+            navbar.appendChild(projectList);
+            projectListElement.addEventListener('click',()=>projectElementDisplay(project,index));
+            });
+            
+        };
+    function projectElementDisplay(project,index){
+        projectContentList.innerHTML="";
+        projectContentBtn.addEventListener('click',()=>{
+            let projectElement = new ProjectElements(projectContentInput.value);
+            Object.assign(projectsTab[index], projectElement);
+            projectElementDisplay(project,index);
+        });
+        
+        console.log("EEE");
+        let projectContentListElement = document.createElement('li');
+        projectContentListElement.innerHTML=projectsTab[index].title;
+        projectContentList.appendChild(projectContentListElement);
+        content.appendChild(projectContentList);
         }
     }
-const defaultProject = new Project("Default");
-tab.push(defaultProject);
 
+const defaultProject = new Project("Default");
+projectsTab.push(defaultProject);
+console.log(projectsTab);
 
 DOM();
-console.log(tab);
+
+const getList = () => {
+    return JSON.stringify(projectsTab,["name"]);
+}
